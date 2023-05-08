@@ -4,7 +4,10 @@ import { Routes, Route } from 'react-router';
 import { Room } from './Componant/Room/Room';
 import { Editor } from './Componant/Editor/Editor';
 import { ProtectedRoute } from './ProtectedRoute';
+import { useStateValue } from './Context/StateProvider';
 const App = () => {
+  const [{user},dispatch] = useStateValue();
+
   return (
     <div className='bg-black w-full h-screen'>
 
@@ -24,7 +27,7 @@ const App = () => {
         <Route path='/' element={<SignUp/>}></Route>
         <Route path='/room' element={<Room/>}></Route>
         <Route path='/editor/:roomid' element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Editor/>
           </ProtectedRoute>
         }></Route>

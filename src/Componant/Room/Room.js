@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import InnerSpiner from "../../Spiner/InnerSpiner";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
+import { useStateValue } from "../../Context/StateProvider";
+import { actionType } from "../../Context/Reducer";
 
 export const Room = () => {
  
@@ -11,6 +13,7 @@ export const Room = () => {
   const [roomid, setRoomid] = useState('')
   const [alertMessage, setAlertMessage] = useState(false);
   const history = useNavigate();
+  const [{user},dispatch] = useStateValue();
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,12 @@ export const Room = () => {
       },
     });
     const backendMessage = await response.json();
+    console.log(backendMessage)
+
+    dispatch({
+      type: actionType.SET_USER,
+      user: backendMessage,
+    });
     
 
     if(!userName || !roomid){
