@@ -6,7 +6,7 @@ import { Editor } from './Componant/Editor/Editor';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useStateValue } from './Context/StateProvider';
 const App = () => {
-  const [{user},dispatch] = useStateValue();
+  const [{user}] = useStateValue();
 
   return (
     <div className='bg-black w-full h-screen'>

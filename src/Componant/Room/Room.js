@@ -49,21 +49,18 @@ export const Room = () => {
       },
     });
     const backendMessage = await response.json();
-    console.log(backendMessage)
-
+   
     dispatch({
       type: actionType.SET_USER,
       user: backendMessage,
     });
     
-
     if(!userName || !roomid){
       setAlertMessage('Every Field Is Required')
     }
     
     else if(response.status === 400 ){
       setAlertMessage(backendMessage)
-      
     }
 
     else if(response.status === 200){
