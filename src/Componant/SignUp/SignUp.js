@@ -4,6 +4,7 @@ import bg from "../../bg2.jpg";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 export const SignUp = () => {
   const [name, setName] = useState("");
@@ -13,32 +14,53 @@ export const SignUp = () => {
   const [submit, setSubmit] = useState(true);
   const history = useNavigate();
 
+  // const clientid = 747315352467-3c1bahbmlbos8tv3tgdebe33v7218b9h.apps.googleusercontent.com
+  // const clientScrect = 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
+
+  // //Google Signin
+  // const responseMessage = (response) => {
+  //   console.log(response);
+  // };
+  // const errorMessage = (error) => {
+  //   console.log(error);
+  // };
+
   const HandleSubmit = async (e) => {
     e.preventDefault();
-    setSubmit(email, name, password)
-    
-    //Fetch Data
-    const response = await fetch("http://localhost:4000/signup", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const backendMessage = await response.json();
-    setAlertMessage(backendMessage);
+    setSubmit(email, name, password);
 
-    setEmail('')
-    setName('')
-    setPassword('')
+    //Check User Name with Regular Expression
+    const regex = /^[a-zA-Z0-9]+$/;
+    const userName = regex.test(name);
 
-    // display response from backend
-    // redirect to next page after 3sec. if SignUp is successful
-    setTimeout(() => {
-      if (response.status === 201) {
-        history("/room");
-      }
-    }, 3000);
+    if (!name || !email || !password) {
+      setAlertMessage("Every Field Required");
+    } else if (!userName) {
+      setAlertMessage("User Name Incorrect Way");
+    } else {
+      //Fetch Data
+      const response = await fetch("http://localhost:4000/signup", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const backendMessage = await response.json();
+      setAlertMessage(backendMessage);
+
+      setEmail("");
+      setName("");
+      setPassword("");
+
+      // display response from backend
+      // redirect to next page after 3sec. if SignUp is successful
+      setTimeout(() => {
+        if (response.status === 201) {
+          history("/room");
+        }
+      }, 3000);
+    }
   };
 
   // Alert PopUp Message Timeout
@@ -163,6 +185,8 @@ export const SignUp = () => {
                   ></path>
                 </svg>
               </motion.button>
+
+              {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage}/> */}
 
               <motion.button
                 whileTap={{ scale: 0.9 }}

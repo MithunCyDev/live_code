@@ -21,7 +21,7 @@ export const Spiner = () => {
           <Dna width="80" color="#fa2a55" />
         </div>
       ) : (
-        <App />
+        <App/>
       )}
     </>
   );

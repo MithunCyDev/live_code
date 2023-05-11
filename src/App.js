@@ -5,6 +5,7 @@ import { Room } from './Componant/Room/Room';
 import { Editor } from './Componant/Editor/Editor';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useStateValue } from './Context/StateProvider';
+import { NotFound } from './Componant/NotFound/NotFound';
 const App = () => {
   const [{user}] = useStateValue();
 
@@ -24,6 +25,7 @@ const App = () => {
       </Toaster> */}
 
       <Routes>
+        <Route path='/*' element={<NotFound/>}></Route>
         <Route path='/' element={<SignUp/>}></Route>
         <Route path='/room' element={<Room/>}></Route>
         <Route path='/editor/:roomid' element={
