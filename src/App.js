@@ -6,14 +6,15 @@ import { Editor } from './Componant/Editor/Editor';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useStateValue } from './Context/StateProvider';
 import { NotFound } from './Componant/NotFound/NotFound';
+import { Toaster } from 'react-hot-toast';
 const App = () => {
   const [{user}] = useStateValue();
 
   return (
     <div className='bg-black w-full h-screen'>
 
-      {/* <Toaster
-        position='top-right'
+      <Toaster
+        position='top-center'
         toastOptions={{
           success:{
             theme:{
@@ -22,7 +23,7 @@ const App = () => {
           },
         }}
       > 
-      </Toaster> */}
+      </Toaster>
 
       <Routes>
         <Route path='/*' element={<NotFound/>}></Route>

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import { useStateValue } from "../../Context/StateProvider";
 import { actionType } from "../../Context/Reducer";
+import { toast } from "react-hot-toast";
 
 export const Room = () => {
  
@@ -23,7 +24,6 @@ export const Room = () => {
       setLoading(false);
     }, 1000);
   }, []);
-
 
   const HandleRoomId = ()=>{
     const id = uuidv4()
@@ -56,21 +56,20 @@ export const Room = () => {
     });
     
     if(!userName || !roomid){
-      setAlertMessage('Every Field Is Required')
+      toast.error("Every field is required")
     }
     
     else if(response.status === 400 ){
-      setAlertMessage(backendMessage)
+      toast.error("Invalid User Name")
     }
 
     else if(response.status === 200){
 
       history(`/editor/${roomid}`)
-      
+
     }
 
   };
-
 
   return (
     <>
@@ -95,7 +94,7 @@ export const Room = () => {
               </div>
             </div>
 
-            {/* Room From Design */}
+            {/* Room Form Design */}
             <form 
             onSubmit={JoinRoom} 
             className="flex flex-col justify-center items-center gap-4 px-4">

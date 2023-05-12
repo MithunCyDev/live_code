@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { toast } from "react-hot-toast";
 
 export const SignUp = () => {
   const [name, setName] = useState("");
@@ -25,18 +26,20 @@ export const SignUp = () => {
   //   console.log(error);
   // };
 
+
   const HandleSubmit = async (e) => {
     e.preventDefault();
     setSubmit(email, name, password);
-
+    
+    
     //Check User Name with Regular Expression
     const regex = /^[a-zA-Z0-9]+$/;
     const userName = regex.test(name);
 
     if (!name || !email || !password) {
-      setAlertMessage("Every Field Required");
+      toast.error("Every Field Required");
     } else if (!userName) {
-      setAlertMessage("User Name Incorrect Way");
+      toast.error("User Name Incorrect Way");
     } else {
       //Fetch Data
       const response = await fetch("http://localhost:4000/signup", {
@@ -46,13 +49,27 @@ export const SignUp = () => {
           "Content-Type": "application/json",
         },
       });
-      const backendMessage = await response.json();
-      setAlertMessage(backendMessage);
+      // const backendMessage = await response.json();
+      // setAlertMessage(backendMessage);
 
-      setEmail("");
-      setName("");
-      setPassword("");
-
+      if(response.status === 400){
+        toast.error("Invalid email address")
+      }
+      else if(response.status === 302){
+        toast.error("User Already Exit")
+      }
+      else if(response.status === 208){
+        toast.error("User Name Already Taken")
+      }
+      else if(response.status === 201){
+        toast.success("User Created Successfully")
+        setEmail("");
+        setName("");
+        setPassword("");
+      }
+      else if(response.status === 500){
+        toast.error("Internal server error")
+      }
       // display response from backend
       // redirect to next page after 3sec. if SignUp is successful
       setTimeout(() => {
@@ -87,7 +104,7 @@ export const SignUp = () => {
               <img className="w-[274px] h-auto" src={logo} alt="logo" />
             </div>
 
-            {/* Alert PopUp Message */}
+            {/* Alert PopUp Message
             <div className="flex justify-center">
               <div
                 className={
@@ -98,7 +115,7 @@ export const SignUp = () => {
               >
                 <h1 className="text-white font-medium">{alertMessage}</h1>
               </div>
-            </div>
+            </div> */}
 
             <form
               method="POST"
@@ -156,7 +173,7 @@ export const SignUp = () => {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={message}
-                className=" bg-themeColor py-2 px-4 w-[274px] mt-4 text-white font-semibold rounded-md"
+                className=" bg-themeColor py-2 px-4 w-[277px] mt-4 text-white font-semibold rounded-md"
               >
                 Sign Up
               </motion.button>
