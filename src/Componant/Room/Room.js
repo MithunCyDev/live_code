@@ -48,21 +48,28 @@ export const Room = () => {
         "Content-Type": "application/json",
       },
     });
-    const backendMessage = await response.json();
+    const backendResponse = await response.json();
+
+    //Set User In The Local Storage
+    localStorage.setItem('user', JSON.stringify(backendResponse))
    
+    //Dispatch User in the Context
     dispatch({
       type: actionType.SET_USER,
-      user: backendMessage,
+      user: backendResponse,
     });
-    
+
+    //If there is no userName and RoomId Throw Error Msg
     if(!userName || !roomid){
       toast.error("Every field is required")
     }
     
+    //If the userName is not Found
     else if(response.status === 400 ){
       toast.error("Invalid User Name")
     }
 
+    //Success and go to the Editor Page
     else if(response.status === 200){
 
       history(`/editor/${roomid}`)
