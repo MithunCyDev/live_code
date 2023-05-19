@@ -49,6 +49,7 @@ export const SignUp = () => {
           "Content-Type": "application/json",
         },
       });
+
       // const backendMessage = await response.json();
       // setAlertMessage(backendMessage);
 
@@ -132,8 +133,8 @@ export const SignUp = () => {
                   value={name}
                   className={
                     submit
-                      ? "rounded-md focus:outline text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
-                      : "rounded-md focus:outline border border-themeColor text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
+                      ? "rounded-md focus:outline-blue text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
+                      : "rounded-md focus:outline-none border border-themeColor text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
                   }
                   type="name"
                   placeholder="user name"
@@ -147,7 +148,7 @@ export const SignUp = () => {
                   value={email}
                   className={
                     submit
-                      ? "rounded-md focus:outline-none text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
+                      ? "rounded-md focus:outline-blue text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
                       : "rounded-md focus:outline-none border border-themeColor text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
                   }
                   type="email"
@@ -162,7 +163,7 @@ export const SignUp = () => {
                   value={password}
                   className={
                     submit
-                      ? "rounded-md focus:outline-none text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
+                      ? "rounded-md focus:outline-blue text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
                       : "rounded-md focus:outline-none border border-themeColor text-white placeholder:text-liteBlue placeholder:opacity-70 placeholder:text-[15] text-md px-6 py-2 bg-deepBlue"
                   }
                   type="password"

@@ -23,6 +23,7 @@ module.exports = {
       'black': '#151730',
       'white': '#ffffff',
       'navyBlue': '#1e2344',
+      'blue': '#2e3866',
       'liteBlue': '#618db8',
       'deepBlue': '#2e3866',
       'themeColor': '#fa2a55',
