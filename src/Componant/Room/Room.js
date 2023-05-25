@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import io from 'socket.io-client';
 import logo from "../../logo.png";
 import { motion } from "framer-motion";
 import InnerSpiner from "../../Spiner/InnerSpiner";
@@ -7,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useStateValue } from "../../Context/StateProvider";
 import { actionType } from "../../Context/Reducer";
 import { toast } from "react-hot-toast";
-import { Field } from "../Field/Field";
+
 
 export const Room = () => {
  
@@ -25,6 +26,9 @@ export const Room = () => {
       setLoading(false);
     }, 1000);
   }, []);
+
+  // // Socket Io Connection
+  // const socket = io('http://localhost:4000'); // Update with your server URL
 
   const HandleRoomId = ()=>{
     const id = uuidv4()
@@ -78,6 +82,23 @@ export const Room = () => {
     }
 
   };
+
+  // const handleCodeChange = newCode => {
+  //   setCode(newCode);
+  //   socket.emit('codeUpdate', { roomid, code: newCode });
+  // };
+
+  // const handleJoinRoom = () => {
+  //   socket.emit('joinRoom', { user, roomid });
+  // };
+
+  // socket.on('codeUpdate', updatedCode => {
+  //   setCode(updatedCode);
+  // });
+
+  // socket.on('userJoin', joinedUsername => {
+  //   console.log(`${joinedUsername} has joined the room.`);
+  // });
 
   return (
     <>
@@ -133,8 +154,8 @@ export const Room = () => {
 
               <div className="flex gap-4">
                 <motion.button
-                  onClick={message}
                   whileTap={{ scale: 0.9 }}
+                  onClick={message}
                   type="submit"
                   className=" bg-themeColor py-2 px-4 w-52 mt-4 text-white font-semibold rounded-md"
                 >
@@ -151,11 +172,7 @@ export const Room = () => {
               </div>
             </form>
         
-            <h3
-              whileTap={{ scale: 0.9 }}
-              className="flex justify-center mt-4 text-white"
-              
-            >
+            <h3 className="flex justify-center mt-4 text-white" >
               Don't Have A Room Id?
               <span onClick={HandleRoomId} 
               className="text-liteBlue ml-2 hover:text-themeColor font-medium cursor-pointer">Create New Room</span>

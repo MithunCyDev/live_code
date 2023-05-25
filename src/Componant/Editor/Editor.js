@@ -5,6 +5,7 @@ import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 import { useStateValue } from "../../Context/StateProvider";
 import Avatar from "react-avatar";
+import  EditorField  from "./EditorField";
 
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
@@ -26,8 +27,8 @@ export const Editor = () => {
       {loading ? (
         <InnerSpiner />
       ) : (
-        <section className="w-full h-full bg-black flex">
-          <div className="h-full">
+        <section className="w-full h-full bg-black flex overflow-hidden">
+          <div className="h-screen">
             <div
               className={
                 menu ? "hidden" : "w-16 bg-blue h-full py-6 px-4 block"
@@ -64,7 +65,7 @@ export const Editor = () => {
             <div
               className={
                 menu
-                  ? "lg:w-[270px] xs:w-[220px] relative h-full bg-deepBlue px-4 py-4 block"
+                  ? "lg:w-[270px] xs:w-[220px] relative h-screen bg-deepBlue px-4 py-4 block"
                   : "hidden"
               }
             >
@@ -122,7 +123,7 @@ export const Editor = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2 items-center absolute bottom-24">
+              <div className="flex gap-2 absolute left-8 bottom-24">
                 <h3 className="text-white">Language:</h3>
                 <span className="text-liteBlue font-bold">Javascript</span>
               </div>
@@ -137,9 +138,9 @@ export const Editor = () => {
             </div>
           </div>
 
-          
-            <textarea className=" w-full h-screen"></textarea>
-          
+            {/* Text Editor */}
+            <EditorField className="w-screen h-screen" />
+
         </section>
       )}
     </>
