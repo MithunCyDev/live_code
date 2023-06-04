@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import InnerSpiner from "../../Spiner/InnerSpiner";
 import logo from "../../logo.png";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
@@ -6,11 +6,17 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useStateValue } from "../../Context/StateProvider";
 import Avatar from "react-avatar";
 import  EditorField  from "./EditorField";
+import { initSocket } from "../../Socket";
+import { useParams } from "react-router-dom";
+import io from 'socket.io-client';
 
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
   const [{ user }] = useStateValue();
+  const socketRef =  useRef(null)
+  const { roomId } = useParams();
 
+  
   // Loader Animation
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +26,18 @@ export const Editor = () => {
       setLoading(false);
     }, 2000);
   }, []);
- 
+  
 
+ 
+  useEffect(()=>{
+    socketRef.current = io(process.env.REACT_APP_BACKEND_URL);
+
+    // Join the room with the provided roomId
+    socketRef.current.emit('joinRoom', roomId);
+
+  },[roomId])
+
+  
   return (
     <>
       {loading ? (

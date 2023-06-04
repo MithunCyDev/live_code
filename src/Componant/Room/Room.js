@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import io from 'socket.io-client';
 import logo from "../../logo.png";
 import { motion } from "framer-motion";
 import InnerSpiner from "../../Spiner/InnerSpiner";
@@ -8,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useStateValue } from "../../Context/StateProvider";
 import { actionType } from "../../Context/Reducer";
 import { toast } from "react-hot-toast";
+
 
 
 export const Room = () => {
@@ -27,8 +27,6 @@ export const Room = () => {
     }, 1000);
   }, []);
 
-  // // Socket Io Connection
-  // const socket = io('http://localhost:4000'); // Update with your server URL
 
   const HandleRoomId = ()=>{
     const id = uuidv4()
@@ -42,7 +40,7 @@ export const Room = () => {
     }, 4000);
   }, [alertMessage]);
 
-  const JoinRoom = async (e) => {
+  const CreateRoom = async (e) => {
     e.preventDefault();
 
     //Fetch Data
@@ -83,23 +81,6 @@ export const Room = () => {
 
   };
 
-  // const handleCodeChange = newCode => {
-  //   setCode(newCode);
-  //   socket.emit('codeUpdate', { roomid, code: newCode });
-  // };
-
-  // const handleJoinRoom = () => {
-  //   socket.emit('joinRoom', { user, roomid });
-  // };
-
-  // socket.on('codeUpdate', updatedCode => {
-  //   setCode(updatedCode);
-  // });
-
-  // socket.on('userJoin', joinedUsername => {
-  //   console.log(`${joinedUsername} has joined the room.`);
-  // });
-
   return (
     <>
       {loading ? (
@@ -125,7 +106,7 @@ export const Room = () => {
 
             {/* Room Form Design */}
             <form 
-            onSubmit={JoinRoom} 
+            onSubmit={CreateRoom} 
             className="flex flex-col justify-center items-center gap-4 px-4">
               <label
                 className="flex flex-col text-white gap-2 text-xl "
