@@ -5,3 +5,11 @@ export const fetchUser = ()=>{
     : localStorage.clear();
     return userInfo;
 };
+
+export const fetchRoomId = ()=>{
+    const userRoomId = 
+    localStorage.getItem("roomId") !== null
+    ? JSON.parse(localStorage.getItem("roomId")) 
+    : localStorage.clear();
+    return userRoomId;
+};

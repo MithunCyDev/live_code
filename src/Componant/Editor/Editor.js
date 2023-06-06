@@ -7,14 +7,14 @@ import { useStateValue } from "../../Context/StateProvider";
 import Avatar from "react-avatar";
 import  EditorField  from "./EditorField";
 import { initSocket } from "../../Socket";
-import { useParams } from "react-router-dom";
 import io from 'socket.io-client';
 
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
-  const [{ user }] = useStateValue();
+  const [{ user, roomId }] = useStateValue();
   const socketRef =  useRef(null)
-  const { roomId } = useParams();
+ 
+
 
   
   // Loader Animation
@@ -33,9 +33,10 @@ export const Editor = () => {
     socketRef.current = io(process.env.REACT_APP_BACKEND_URL);
 
     // Join the room with the provided roomId
-    socketRef.current.emit('joinRoom', roomId);
+    socketRef.current.emit('joinRoom', roomId,);
+    
 
-  },[roomId])
+  },[user])
 
   
   return (
@@ -96,7 +97,7 @@ export const Editor = () => {
               {/* Room User Name */}
               <div className="bg-navyBlue py-2 px-2 mt-10 rounded-md flex justify-center">
                 <h1 className="text-themeColor font-semibold uppercase lg:text-xl xs:text-md">
-                  {user.name}'S
+                  {user}'S
                   <span className="text-white ml-2 font-medium">Room</span>
                 </h1>
               </div>
@@ -106,7 +107,7 @@ export const Editor = () => {
                 {/* Host Avatar */}
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Avatar
-                    name={user.name}
+                    name={user}
                     size={50}
                     color={"#618db8"}
                     round="5px"

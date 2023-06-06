@@ -3,20 +3,17 @@ import logo from "../../logo.png";
 import { motion } from "framer-motion";
 import InnerSpiner from "../../Spiner/InnerSpiner";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { useStateValue } from "../../Context/StateProvider";
 import { actionType } from "../../Context/Reducer";
 import { toast } from "react-hot-toast";
 
-
-
 export const Room = () => {
- 
-  const [userName, setUserName] = useState('')
-  const [roomid, setRoomid] = useState('')
+  const [userName, setUserName] = useState("");
+  const [roomid, setRoomid] = useState("");
   const [alertMessage, setAlertMessage] = useState(false);
   const history = useNavigate();
-  const [{user},dispatch] = useStateValue();
+  const [dispatch] = useStateValue();
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -27,11 +24,10 @@ export const Room = () => {
     }, 1000);
   }, []);
 
-
-  const HandleRoomId = ()=>{
-    const id = uuidv4()
-    setRoomid(id)
-  }
+  const HandleRoomId = () => {
+    const id = uuidv4();
+    setRoomid(id);
+  };
 
   // Alert PopUp Message Timeout
   const message = useEffect(() => {
@@ -54,8 +50,8 @@ export const Room = () => {
     const backendResponse = await response.json();
 
     //Set User In The Local Storage
-    localStorage.setItem('user', JSON.stringify(backendResponse))
-   
+    localStorage.setItem("user", JSON.stringify(backendResponse));
+
     //Dispatch User in the Context
     dispatch({
       type: actionType.SET_USER,
@@ -63,22 +59,29 @@ export const Room = () => {
     });
 
     //If there is no userName and RoomId Throw Error Msg
-    if(!userName || !roomid){
-      toast.error("Every field is required")
+    if (!userName || !roomid) {
+      toast.error("Every field is required");
     }
-    
+
     //If the userName is not Found
-    else if(response.status === 400 ){
-      toast.error("Invalid User Name")
+    else if (response.status === 400) {
+      toast.error("Invalid User Name");
     }
 
     //Success and go to the Editor Page
-    else if(response.status === 200){
+    else if (response.status === 200) {
 
-      history(`/editor/${roomid}`)
-
+      //If the user is valid then set room id in the localStorage
+      localStorage.setItem("roomId", JSON.stringify(roomid));
+      //Dispatch RoomId in the Context
+      dispatch({
+        type: actionType.SET_ROOM,
+        roomId: roomid,
+      });
+    
+      //Go to the Editor Page
+      history(`/editor/${roomid}`);
     }
-
   };
 
   return (
@@ -105,9 +108,10 @@ export const Room = () => {
             </div>
 
             {/* Room Form Design */}
-            <form 
-            onSubmit={CreateRoom} 
-            className="flex flex-col justify-center items-center gap-4 px-4">
+            <form
+              onSubmit={CreateRoom}
+              className="flex flex-col justify-center items-center gap-4 px-4"
+            >
               <label
                 className="flex flex-col text-white gap-2 text-xl "
                 htmlFor="text"
@@ -115,7 +119,7 @@ export const Room = () => {
                 User Name
                 <input
                   className=" w-80 h-12 rounded-md focus:outline-none text-white placeholder:text-liteBlue placeholder:opacity-70 text-md px-4 py-2 bg-deepBlue"
-                  onChange={(e)=> setUserName(e.target.value)}
+                  onChange={(e) => setUserName(e.target.value)}
                   type="name"
                   placeholder="user name"
                   value={userName}
@@ -125,7 +129,7 @@ export const Room = () => {
               <label className="flex flex-col text-white gap-2 text-xl ">
                 Paste Invitation Room Id
                 <input
-                  onChange={(e)=> setRoomid(e.target.value)}
+                  onChange={(e) => setRoomid(e.target.value)}
                   className=" w-80 h-12 rounded-md focus:outline-none text-white placeholder:text-liteBlue placeholder:opacity-70 text-md px-4 py-2 bg-deepBlue"
                   type="text"
                   placeholder="room id"
@@ -142,7 +146,7 @@ export const Room = () => {
                 >
                   Create A Room
                 </motion.button>
-                
+
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   type="submit"
@@ -152,11 +156,15 @@ export const Room = () => {
                 </motion.button>
               </div>
             </form>
-        
-            <h3 className="flex justify-center mt-4 text-white" >
+
+            <h3 className="flex justify-center mt-4 text-white">
               Don't Have A Room Id?
-              <span onClick={HandleRoomId} 
-              className="text-liteBlue ml-2 hover:text-themeColor font-medium cursor-pointer">Create New Room</span>
+              <span
+                onClick={HandleRoomId}
+                className="text-liteBlue ml-2 hover:text-themeColor font-medium cursor-pointer"
+              >
+                Create New Room
+              </span>
             </h3>
           </div>
         </section>
