@@ -5,18 +5,21 @@ import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 import { useStateValue } from "../../Context/StateProvider";
 import Avatar from "react-avatar";
-import  EditorField  from "./EditorField";
-import { initSocket } from "../../Socket";
-import io from 'socket.io-client';
+import EditorField from "./EditorField";
+import io from "socket.io-client";
+import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
   const [{ user, roomId }] = useStateValue();
-  const socketRef =  useRef(null)
- 
+  const socketRef = useRef(null);
+  const copyTextRef = useRef(null);
+  const [userName, setUserName] = useState("");
+  const [client, setClient] = useState([]);
+  const navigate = useNavigate();
 
-
-  
   // Loader Animation
   const [loading, setLoading] = useState(false);
 
@@ -26,19 +29,50 @@ export const Editor = () => {
       setLoading(false);
     }, 2000);
   }, []);
-  
 
- 
-  useEffect(()=>{
+  useEffect(() => {
     socketRef.current = io(process.env.REACT_APP_BACKEND_URL);
-
+    setUserName(user);
     // Join the room with the provided roomId
-    socketRef.current.emit('joinRoom', roomId,);
-    
+    socketRef.current.emit("joinRoom", roomId, user);
 
-  },[user])
+    //Listening for joined event
+    socketRef.current.on("joined", ({ clients, user, socketId }) => {
+      if (user !== userName) {
+        toast.success(`${user} joined the room`);
+        console.log(`${user} joined the room`);
+      }
 
-  
+      setClient(clients);
+    });
+
+    socketRef.current.on("disconnected", ({ socketId, userName }) => {
+      setClient((prev) => {
+        return prev.filter((client) => client.socketId !== socketId);
+      });
+      toast.success(`${userName} left the room`);
+    });
+
+    //React Cleaning Function
+    return () => {
+      //Clear Memory after disconnect the user
+      socketRef.current.off('joined')
+      socketRef.current.off('disconnected')
+      socketRef.current.disconnect();
+    };
+
+  }, [user, roomId]);
+
+  //Leave Room Function, Navigate to the home Page
+  const leaveRoom = ()=>{
+    navigate('/') // useNavigate
+  };
+
+  //Copy Room Id
+  const handleCopy = ()=>{
+    navigator.clipboard.writeText(roomId)
+  };
+
   return (
     <>
       {loading ? (
@@ -57,25 +91,23 @@ export const Editor = () => {
               />
               <Avatar
                 className="mt-6"
-                name={user.name}
+                name={user}
                 size={30}
                 color={"#618db8"}
-                round="3px"
+                round="5px"
               />
+
               <div className="mt-20">
-                <Avatar
-                  name="sdf sdf"
-                  size={30}
-                  color={"#fa2a55"}
-                  round="3px"
-                />
-                <Avatar
-                  className="mt-2"
-                  name="sdf sdf"
-                  size={30}
-                  color={"#fa2a55"}
-                  round="3px"
-                />
+                {client.map((name) => (
+                  <Avatar 
+                    key={name.index}
+                    className="mb-3"
+                    name={name.userName}
+                    size={30}
+                    color={"#fa2a55"}
+                    round="5px"
+                  />
+                ))}
               </div>
             </div>
 
@@ -106,58 +138,58 @@ export const Editor = () => {
                 <h3 className="text-white font-semibold text-sm">HOST</h3>
                 {/* Host Avatar */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Avatar
-                    name={user}
-                    size={50}
-                    color={"#618db8"}
-                    round="5px"
-                  />
+                  <Avatar name={user} size={50} color={"#618db8"} round="7px" />
                 </div>
 
-                <h3 className="text-white font-semibold text-sm mt-10">
-                  USER
-                </h3>
+                <h3 className="text-white font-semibold text-sm mt-10">USER</h3>
                 {/* User Avatar */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Avatar
-                    name="Nusrin Sultana"
-                    size={50}
-                    color={"#fa2a55"}
-                    round="5px"
-                  />
-                  <Avatar
-                    name="Nusrin Sultana"
-                    size={50}
-                    color={"#fa2a55"}
-                    round="5px"
-                  />
-                  <Avatar
-                    name="Nusrin Sultana"
-                    size={50}
-                    color={"#fa2a55"}
-                    round="5px"
-                  />
+                  {client.map((name) => (
+                    <Avatar
+                      key={name.index}
+                      name={name.userName}
+                      size={50}
+                      color={"#fa2a55"}
+                      round="7px"
+                    />
+                  ))}
                 </div>
               </div>
-
-              <div className="flex gap-2 absolute left-8 bottom-24">
+                
+                {/* Language JavaScript Section */}
+              <div className="flex justify-center gap-2 fixed left-6 bottom-36">
                 <h3 className="text-white">Language:</h3>
                 <span className="text-liteBlue font-bold">Javascript</span>
               </div>
+              
+              {/* Copy Room ID */}
               <div className="flex justify-center">
-                <button
-                  className="text-white bg-black py-1 lg:px-14 xs:px-11 absolute bottom-8 rounded-md font-semibold 
-                  text-lg cursor-pointer hover:bg-themeColor"
+                <motion.button
+                  onClick={handleCopy}
+                  whileTap={{ scale:0.9 }}
+                  className=" text-white bg-black py-1 lg:px-12 xs:px-9 fixed bottom-24 rounded-md font-semibold 
+                  text-lg cursor-pointer"
+                >
+                  Copy Room Id
+                </motion.button>
+              </div>
+
+              {/* Leave Room Section */}
+              <div className="flex justify-center">
+                <motion.button
+                  onClick={leaveRoom}
+                  whileTap={{ scale: 0.9 }}
+                  className=" text-white bg-themeColor py-1 lg:px-14 xs:px-11 fixed bottom-10 rounded-md font-semibold 
+                  text-lg cursor-pointer"
                 >
                   Leave Room
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
 
-            {/* Text Editor */}
-            <EditorField className="w-screen h-screen" />
-
+          {/* Text Editor */}
+          <EditorField className="lg:w-screen h-screen xs:w-screen" />
         </section>
       )}
     </>

@@ -13,7 +13,7 @@ export const Room = () => {
   const [roomid, setRoomid] = useState("");
   const [alertMessage, setAlertMessage] = useState(false);
   const history = useNavigate();
-  const [dispatch] = useStateValue();
+  const [ {user}, dispatch] = useStateValue();
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -29,12 +29,12 @@ export const Room = () => {
     setRoomid(id);
   };
 
-  // Alert PopUp Message Timeout
-  const message = useEffect(() => {
-    setTimeout(() => {
-      setAlertMessage(false);
-    }, 4000);
-  }, [alertMessage]);
+  // // Alert PopUp Message Timeout
+  // const message = useEffect(() => {
+  //   setTimeout(() => {
+  //     setAlertMessage(false);
+  //   }, 4000);
+  // }, [alertMessage]);
 
   const CreateRoom = async (e) => {
     e.preventDefault();
@@ -95,7 +95,7 @@ export const Room = () => {
               <img className="w-72 h-auto" src={logo} alt="logo" />
             </div>
 
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <div
                 className={
                   alertMessage
@@ -105,7 +105,7 @@ export const Room = () => {
               >
                 <h1 className="text-white font-medium">{alertMessage}</h1>
               </div>
-            </div>
+            </div> */}
 
             {/* Room Form Design */}
             <form
@@ -140,7 +140,6 @@ export const Room = () => {
               <div className="flex gap-4">
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  onClick={message}
                   type="submit"
                   className=" bg-themeColor py-2 px-4 w-52 mt-4 text-white font-semibold rounded-md"
                 >
