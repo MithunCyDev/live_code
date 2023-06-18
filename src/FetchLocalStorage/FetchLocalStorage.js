@@ -1,7 +1,7 @@
 export const fetchUser = ()=>{
     const userInfo = 
-    localStorage.getItem("user") !== null
-    ? JSON.parse(localStorage.getItem("user")) 
+    localStorage.getItem("userName") !== null
+    ? JSON.parse(localStorage.getItem("userNames")) 
     : localStorage.clear();
     return userInfo;
 };

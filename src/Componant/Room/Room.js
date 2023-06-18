@@ -94,20 +94,7 @@ export const Room = () => {
             <div className="flex justify-center items-center mb-8">
               <img className="w-72 h-auto" src={logo} alt="logo" />
             </div>
-
-            {/* <div className="flex justify-center">
-              <div
-                className={
-                  alertMessage
-                    ? "bg-themeColor px-4 py-2 fixed top-10 rounded-md min-w-[150px] text-center transition-all duration-150"
-                    : "hidden"
-                }
-              >
-                <h1 className="text-white font-medium">{alertMessage}</h1>
-              </div>
-            </div> */}
-
-            {/* Room Form Design */}
+            
             <form
               onSubmit={CreateRoom}
               className="flex flex-col justify-center items-center gap-4 px-4"
