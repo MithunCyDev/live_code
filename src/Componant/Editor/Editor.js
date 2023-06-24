@@ -39,12 +39,14 @@ export const Editor = () => {
 
     //Listening for joined event
     socketRef.current.on("joined", ({ clients, user, socketId }) => {
-      if (userName !== user) {
+      if (!sessionStorage.getItem("alertShown")) {
         toast.success(`${user} joined the room`);
-        console.log(`${user} joined the room`);
+
+        sessionStorage.setItem("alertShown", true);
       }
 
       setClient(clients);
+      sessionStorage.setItem("authenticated", "true");
     });
 
     //Disconnected user from a room
@@ -64,6 +66,10 @@ export const Editor = () => {
     };
   }, [userName, user, roomId]);
 
+  // useEffect(()=>{
+
+  // },[user])
+
   //Leave Room Function, Navigate to the Home Page or Room Page
   const leaveRoom = () => {
     if (user) {
@@ -81,7 +87,7 @@ export const Editor = () => {
     }
   };
 
-  const alertUpdate = () => {
+  const leaveAlert = () => {
     if (user) {
       setAlert(true);
     }
@@ -103,7 +109,7 @@ export const Editor = () => {
       {loading ? (
         <InnerSpiner />
       ) : (
-        <section className="w-full h-full bg-black flex overflow-hidden">
+        <section className="w-screen h-full bg-black flex overflow-hidden">
           <div className="h-screen">
             <div
               className={
@@ -182,7 +188,7 @@ export const Editor = () => {
               </div>
 
               {/* Language JavaScript Section */}
-              <div className="flex justify-center gap-2 fixed left-6 bottom-36">
+              <div className="flex justify-center gap-2 fixed lg:left-8 xs:left-5 bottom-36">
                 <h3 className="text-white">Language:</h3>
                 <span className="text-liteBlue font-bold">Javascript</span>
               </div>
@@ -202,7 +208,7 @@ export const Editor = () => {
               {/* Leave Room Section */}
               <div className="flex justify-center">
                 <motion.button
-                  onClick={alertUpdate}
+                  onClick={leaveAlert}
                   whileTap={{ scale: 0.9 }}
                   className=" text-white bg-themeColor py-1 lg:px-14 xs:px-11 fixed bottom-10 rounded-md font-semibold 
                   text-lg cursor-pointer"
@@ -215,15 +221,15 @@ export const Editor = () => {
 
           {/* Alert box section */}
           <div
-            
             className={
               alert
-                ? "w-screen h-screen fixed z-[9999] flex justify-center items-center backdrop:blur-md"
+                ? "w-screen h-screen fixed z-[9999] flex justify-center items-center backdrop-blur-sm"
                 : " hidden"
             }
           >
-            <motion.div className="lg:w-[400px] lg:h-[170px] xs:w-[200px] xs:h-[100px] bg-deepBlue rounded-md transition-all duration-300
-              flex flex-col justify-center items-center lg:gap-6 xs:gap-3 shadow-sm shadow-liteBlue border-t-liteBlue border"
+            <motion.div
+              className="lg:w-[400px] lg:h-[170px] xs:w-[200px] xs:h-[100px] backdrop-blur-lg rounded-md 
+            transition-all duration-300 flex flex-col justify-center items-center lg:gap-6 xs:gap-3 shadow-sm shadow-liteBlue border-t-liteBlue border"
             >
               <h1 className="text-white font-semibold lg:text-lg xs:text-sm">
                 Are you want to leave?
@@ -248,7 +254,7 @@ export const Editor = () => {
           </div>
 
           {/* Text Editor */}
-          <EditorField className="lg:w-screen h-screen xs:w-screen" />
+          <EditorField className="lg:w-screen h-screen xs:w-screen fixed left-0 right-0" />
         </section>
       )}
     </>

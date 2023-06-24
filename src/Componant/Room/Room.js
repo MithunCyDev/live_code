@@ -11,9 +11,9 @@ import { toast } from "react-hot-toast";
 export const Room = () => {
   const [userName, setUserName] = useState("");
   const [roomid, setRoomid] = useState("");
-  const [alertMessage, setAlertMessage] = useState(false);
+  const [password, setPassword] = useState("");
   const history = useNavigate();
-  const [ {user}, dispatch] = useStateValue();
+  const [{ user }, dispatch] = useStateValue();
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -29,48 +29,45 @@ export const Room = () => {
     setRoomid(id);
   };
 
-  // // Alert PopUp Message Timeout
-  // const message = useEffect(() => {
-  //   setTimeout(() => {
-  //     setAlertMessage(false);
-  //   }, 4000);
-  // }, [alertMessage]);
-
   const CreateRoom = async (e) => {
     e.preventDefault();
 
     //Fetch Data
     const response = await fetch("http://localhost:4000/room", {
       method: "POST",
-      body: JSON.stringify({ userName, roomid }),
+      body: JSON.stringify({ userName, roomid, password }),
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const backendResponse = await response.json();
+    const user = await response.json();
 
     //Set User In The Local Storage
-    localStorage.setItem("user", JSON.stringify(backendResponse));
+    localStorage.setItem("user", JSON.stringify(user));
 
     //Dispatch User in the Context
     dispatch({
       type: actionType.SET_USER,
-      user: backendResponse,
+      user: user,
     });
 
     //If there is no userName and RoomId Throw Error Msg
-    if (!userName || !roomid) {
+    if (!userName || !roomid || !password) {
       toast.error("Every field is required");
     }
 
     //If the userName is not Found
     else if (response.status === 400) {
-      toast.error("Invalid User Name");
+      toast.error("Invalid credentials");
+    }
+    
+    //If the Password is not Found
+    else if (response.status === 404) {
+      toast.error("Invalid Password");
     }
 
     //Success and go to the Editor Page
     else if (response.status === 200) {
-
       //If the user is valid then set room id in the localStorage
       localStorage.setItem("roomId", JSON.stringify(roomid));
       //Dispatch RoomId in the Context
@@ -78,11 +75,24 @@ export const Room = () => {
         type: actionType.SET_ROOM,
         roomId: roomid,
       });
-    
+
       //Go to the Editor Page
       history(`/editor/${roomid}`);
     }
   };
+
+  useEffect(() => {
+    sessionStorage.removeItem('authenticated');
+   // User Will be LogOut if User ComeBack to the Editor Page
+    window.onpopstate = function(event) {
+      const authenticated = sessionStorage.getItem('authenticated');
+      if (!authenticated) {
+        window.history.replaceState(null, null, window.location.href ='/room');
+        event.preventDefault();
+        localStorage.clear()
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -90,18 +100,18 @@ export const Room = () => {
         <InnerSpiner />
       ) : (
         <section className="flex justify-center items-center h-screen w-full font-[roboto]">
-          <div className="bg-navyBlue bg-opacity-20 min-w-[340px] h-auto py-16 lg:w-[400px] rounded-md ring-1 ring-liteBlue">
+          <div className="bg-navyBlue bg-opacity-20 min-w-[340px] h-auto py-8 lg:w-[400px] rounded-md ring-1 ring-liteBlue">
             <div className="flex justify-center items-center mb-8">
               <img className="w-72 h-auto" src={logo} alt="logo" />
             </div>
-            
+
             <form
               onSubmit={CreateRoom}
               className="flex flex-col justify-center items-center gap-4 px-4"
             >
               <label
                 className="flex flex-col text-white gap-2 text-xl "
-                htmlFor="text"
+                htmlFor="name"
               >
                 User Name
                 <input
@@ -110,6 +120,19 @@ export const Room = () => {
                   type="name"
                   placeholder="user name"
                   value={userName}
+                />
+              </label>
+              <label
+                className="flex flex-col text-white gap-2 text-xl "
+                htmlFor="password"
+              >
+                Password
+                <input
+                  className=" w-80 h-12 rounded-md focus:outline-none text-white placeholder:text-liteBlue placeholder:opacity-70 text-md px-4 py-2 bg-deepBlue"
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="Password"
+                  value={password}
                 />
               </label>
 
@@ -135,7 +158,6 @@ export const Room = () => {
 
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  type="submit"
                   className=" bg-themeColor py-2 px-4 w-24 mt-4 text-white font-semibold rounded-md"
                 >
                   Join
