@@ -15,11 +15,12 @@ import { actionType } from "../../Context/Reducer";
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
   const [alert, setAlert] = useState(false);
-  const [{ user, roomId }, dispatch] = useStateValue();
+  const [{ user, roomId, newCode }, dispatch] = useStateValue();
   const socketRef = useRef(null);
   const [userName, setUserName] = useState("");
   const [client, setClient] = useState([]);
   const navigate = useNavigate();
+  const [code, setCode] = useState("");
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,20 @@ export const Editor = () => {
     // Join the room with the provided roomId
     socketRef.current.emit("joinRoom", roomId, user);
 
+    setCode(newCode);
+    // Send the updated code to other users in the room
+    socketRef.current.emit("codeUpdate", newCode, roomId);
+
+    // Listen for code updates from other users in the room
+    socketRef.current.on("codeUpdate", (newCode) => {
+      setCode(newCode);
+      localStorage.setItem("newCode", JSON.stringify(newCode));
+      dispatch({
+        type: actionType.SET_CODE,
+        newCode: newCode,
+      });
+    });
+
     //Listening for joined event
     socketRef.current.on("joined", ({ clients, user, socketId }) => {
       if (!sessionStorage.getItem("alertShown")) {
@@ -44,9 +59,8 @@ export const Editor = () => {
 
         sessionStorage.setItem("alertShown", true);
       }
-
       setClient(clients);
-      sessionStorage.setItem("authenticated", "true");
+      sessionStorage.setItem("authenticated", true);
     });
 
     //Disconnected user from a room
@@ -64,11 +78,7 @@ export const Editor = () => {
       socketRef.current.off("disconnected");
       socketRef.current.disconnect();
     };
-  }, [userName, user, roomId]);
-
-  // useEffect(()=>{
-
-  // },[user])
+  }, [userName, user, roomId, code]);
 
   //Leave Room Function, Navigate to the Home Page or Room Page
   const leaveRoom = () => {
@@ -129,9 +139,9 @@ export const Editor = () => {
               />
 
               <div className="mt-20">
-                {client.map((name) => (
+                {client.map((name, index) => (
                   <Avatar
-                    key={name.index}
+                    key={index}
                     className="mb-3"
                     name={name.userName}
                     size={30}
@@ -175,9 +185,9 @@ export const Editor = () => {
                 <h3 className="text-white font-semibold text-sm mt-10">USER</h3>
                 {/* User Avatar */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {client.map((name) => (
+                  {client.map((name, index) => (
                     <Avatar
-                      key={name.index}
+                      key={index}
                       name={name.userName}
                       size={50}
                       color={"#fa2a55"}

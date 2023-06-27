@@ -13,3 +13,11 @@ export const fetchRoomId = ()=>{
     : localStorage.clear();
     return userRoomId;
 };
+
+export const fetchNewCode = ()=>{
+    const userCode = 
+    localStorage.getItem("newCode") !== null
+    ? JSON.parse(localStorage.getItem("newCode")) 
+    : localStorage.clear();
+    return userCode;
+};
