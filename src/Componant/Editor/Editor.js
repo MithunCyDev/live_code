@@ -15,12 +15,11 @@ import { actionType } from "../../Context/Reducer";
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
   const [alert, setAlert] = useState(false);
-  const [{ user, roomId, newCode }, dispatch] = useStateValue();
+  const [{ user, roomId}, dispatch] = useStateValue();
   const socketRef = useRef(null);
-  const [userName, setUserName] = useState("");
   const [client, setClient] = useState([]);
   const navigate = useNavigate();
-  const [code, setCode] = useState("");
+
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,6 @@ export const Editor = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setUserName(user);
     }, 2000);
   }, []);
 
@@ -38,19 +36,7 @@ export const Editor = () => {
     // Join the room with the provided roomId
     socketRef.current.emit("joinRoom", roomId, user);
 
-    setCode(newCode);
-    // Send the updated code to other users in the room
-    socketRef.current.emit("codeUpdate", newCode, roomId);
-
-    // Listen for code updates from other users in the room
-    socketRef.current.on("codeUpdate", (newCode) => {
-      setCode(newCode);
-      localStorage.setItem("newCode", JSON.stringify(newCode));
-      dispatch({
-        type: actionType.SET_CODE,
-        newCode: newCode,
-      });
-    });
+    // setCode(newCode);
 
     //Listening for joined event
     socketRef.current.on("joined", ({ clients, user, socketId }) => {
@@ -74,11 +60,11 @@ export const Editor = () => {
     //React Cleaning Function
     return () => {
       //Clear Memory after disconnect the user
+      socketRef.current.disconnect();
       socketRef.current.off("joined");
       socketRef.current.off("disconnected");
-      socketRef.current.disconnect();
     };
-  }, [userName, user, roomId, code]);
+  }, [socketRef, user, roomId]);
 
   //Leave Room Function, Navigate to the Home Page or Room Page
   const leaveRoom = () => {
@@ -264,7 +250,7 @@ export const Editor = () => {
           </div>
 
           {/* Text Editor */}
-          <EditorField className="lg:w-screen h-screen xs:w-screen fixed left-0 right-0" />
+          <EditorField socketRef={socketRef} className="lg:w-screen h-screen xs:w-screen fixed left-0 right-0" />
         </section>
       )}
     </>

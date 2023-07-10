@@ -1,42 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
-import './Editor.css';
-import { useStateValue } from '../../Context/StateProvider';
-import { actionType } from '../../Context/Reducer';
+import React, { useEffect, useState } from "react";
+import MonacoEditor from "react-monaco-editor";
+import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
+import "./Editor.css";
+import { useStateValue } from "../../Context/StateProvider";
 
-
-function EditorField() {
-
-  const [code, setCode] = useState()
-  const [{ newCode }, dispatch] = useStateValue();
-
-  const handleEditorDidMount = (editor) => {
-    // You can perform additional setup or access the editor instance here
-    // console.log('Editor did mount:', editor);
-    
-  };
+function EditorField({socketRef}) {
+  const [code, setCode] = useState();
+  const [{ roomId, user }, dispatch] = useStateValue();
   
-  const handleEditorChange = async (value, event) => {
-    
-    // Handle changes in the editor's content
-    console.log('Editor content changed:', value);
 
-    localStorage.setItem('newCode', JSON.stringify(value))
-    //Dispatch code in the Context
-     dispatch({
-      type: actionType.SET_CODE,
-      newCode: value,
-    });
-  };
+  // const handleEditorDidMount = (editor) => {
+  //   // You can perform additional setup or access the editor instance here
+  //   console.log('Editor did mount:', editor);
+  // };
 
-  useEffect(()=>{
-    setCode(newCode)
-  },[])
-
+  useEffect(() => {
+    if (code !== undefined) {
+      socketRef.current.emit('codeChange', {
+        user,
+        roomId,
+        code,
+      });
+      console.log(code, 'code run');
+    }
+  }, [code, socketRef.current]);
   
+  
+  useEffect(() => {
+    // Set up the event listener for receiving code updates
+    const handleCodeUpdate = (code) => {
+      if (code) {
+        setCode(code);
+        console.log(code, 'database code');
+      }
+    };
+  
+    if (socketRef.current) {
+      socketRef.current.on('updateCode', handleCodeUpdate);
+    }
+  
+    // Clean up the event listener when the component unmounts
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('updateCode', handleCodeUpdate);
+      }
+    };
+  }, [socketRef]);
+  
+  
+  
+  
+  
+
+  // console.log(code, roomId)
+ 
+
+
   return (
-    <MonacoEditor className="py-7 w-screen h-full overflow-auto text-themeColor"
+    <MonacoEditor
+      className="py-7 w-screen h-full overflow-auto text-themeColor"
       language="javascript"
       theme="vs-dark"
       options={{
@@ -44,8 +66,8 @@ function EditorField() {
         automaticLayout: true,
       }}
       value={code}
-      onChange={handleEditorChange}
-      editorDidMount={handleEditorDidMount}
+      onChange={(e)=> setCode(e) }
+      
     />
   );
 }
