@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import InnerSpiner from "../../Spiner/InnerSpiner";
 import logo from "../../logo.png";
-import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import {
+  HiOutlineMenuAlt2,
+  HiOutlineVideoCamera,
+  HiOutlinePhone,
+} from "react-icons/hi";
+import { TbMicrophoneOff } from "react-icons/tb";
 import { IoIosArrowBack } from "react-icons/io";
 import { useStateValue } from "../../Context/StateProvider";
 import Avatar from "react-avatar";
@@ -15,11 +20,11 @@ import { actionType } from "../../Context/Reducer";
 export const Editor = () => {
   const [menu, setMenu] = useState(true);
   const [alert, setAlert] = useState(false);
-  const [{ user, roomId}, dispatch] = useStateValue();
+  const [{ user, roomId }, dispatch] = useStateValue();
   const socketRef = useRef(null);
   const [client, setClient] = useState([]);
+  const [host, setHost] = useState();
   const navigate = useNavigate();
-
 
   // Loader Animation
   const [loading, setLoading] = useState(false);
@@ -47,6 +52,8 @@ export const Editor = () => {
       }
       setClient(clients);
       sessionStorage.setItem("authenticated", true);
+      //Select host from all user
+      setHost(clients[0].userName);
     });
 
     //Disconnected user from a room
@@ -118,7 +125,7 @@ export const Editor = () => {
               />
               <Avatar
                 className="mt-6"
-                name={user}
+                name={host}
                 size={30}
                 color={"#618db8"}
                 round="5px"
@@ -147,28 +154,24 @@ export const Editor = () => {
             >
               <IoIosArrowBack
                 onClick={() => setMenu(!menu)}
-                className="text-liteBlue w-6 h-6 absolute right-[2px] lg:top-[500px] xs:top-[350px] md:top-[400px] cursor-pointer hover:text-themeColor"
+                className="z-[999] text-liteBlue w-6 h-6 absolute right-[2px] lg:top-[500px] xs:top-[350px] md:top-[400px] cursor-pointer hover:text-themeColor"
               />
               {/* Logo Here */}
               <div className="flex py-4">
                 <img className="lg:w-52 h-auto xs:w-40" src={logo} alt="" />
               </div>
               {/* Room User Name */}
-              <div className="bg-navyBlue py-2 px-2 mt-10 rounded-md flex justify-center">
+              <div className="bg-black py-2 px-2 mt-10 rounded-md flex justify-center">
                 <h1 className="text-themeColor font-semibold uppercase lg:text-xl xs:text-md">
-                  {user}'S
+                  {host}'S
                   <span className="text-white ml-2 font-medium">Room</span>
                 </h1>
               </div>
 
               <div className="mt-10">
-                <h3 className="text-white font-semibold text-sm">HOST</h3>
-                {/* Host Avatar */}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Avatar name={user} size={50} color={"#618db8"} round="7px" />
-                </div>
-
-                <h3 className="text-white font-semibold text-sm mt-10">USER</h3>
+                <h3 className="text-white font-semibold text-sm mt-10">
+                  Connected User
+                </h3>
                 {/* User Avatar */}
                 <div className="mt-4 flex flex-wrap gap-2">
                   {client.map((name, index) => (
@@ -181,6 +184,28 @@ export const Editor = () => {
                     />
                   ))}
                 </div>
+              </div>
+
+              {/* Call Section */}
+              <div className="flex justify-center gap-2 fixed lg:left-8 xs:left-5 bottom-52">
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="border border-navyBlue py-2 px-4 rounded-md cursor-pointer"
+                >
+                  <HiOutlineVideoCamera className="text-themeColor w-6 h-6 " />
+                </motion.div>
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="border border-navyBlue py-2 px-4 rounded-md cursor-pointer"
+                >
+                  <HiOutlinePhone className="text-themeColor w-6 h-6 " />
+                </motion.div>
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="border border-navyBlue py-2 px-4 rounded-md cursor-pointer"
+                >
+                  <TbMicrophoneOff className="text-gray w-6 h-6" />
+                </motion.div>
               </div>
 
               {/* Language JavaScript Section */}
@@ -250,7 +275,10 @@ export const Editor = () => {
           </div>
 
           {/* Text Editor */}
-          <EditorField socketRef={socketRef} className="lg:w-screen h-screen xs:w-screen fixed left-0 right-0" />
+          <EditorField
+            socketRef={socketRef}
+            className="lg:w-screen h-screen xs:w-screen fixed left-0 right-0"
+          />
         </section>
       )}
     </>

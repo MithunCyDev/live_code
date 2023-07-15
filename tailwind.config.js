@@ -29,6 +29,7 @@ module.exports = {
       'deepBlue': '#2e3866',
       'themeColor': '#fa2a55',
       'liteRed': '#fae4f0',
+      'gray': '#919191',
     },
   },
   plugins: [],

@@ -21,9 +21,9 @@ function EditorField({socketRef}) {
         roomId,
         code,
       });
-      console.log(code, 'code run');
+      // console.log(code, 'code run');
     }
-  }, [code, socketRef.current]);
+  }, [socketRef, code]);
   
   
   useEffect(() => {
@@ -31,7 +31,7 @@ function EditorField({socketRef}) {
     const handleCodeUpdate = (code) => {
       if (code) {
         setCode(code);
-        console.log(code, 'database code');
+        // console.log(code, 'database code');
       }
     };
   
@@ -45,16 +45,8 @@ function EditorField({socketRef}) {
         socketRef.current.off('updateCode', handleCodeUpdate);
       }
     };
-  }, [socketRef]);
+  }, [code, socketRef]);
   
-  
-  
-  
-  
-
-  // console.log(code, roomId)
- 
-
 
   return (
     <MonacoEditor
